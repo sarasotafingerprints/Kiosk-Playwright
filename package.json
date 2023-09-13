@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "env-template": "env-template.js",
     "test": "jest --testTimeout 10000"
   },
   "dependencies": {
