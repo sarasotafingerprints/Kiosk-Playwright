@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 module.exports = {
   // This is just shorthand to reference the installed dependencies you have.
   // Zapier will need to know these before we can upload.
