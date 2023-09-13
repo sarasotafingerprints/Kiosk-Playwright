@@ -1,4 +1,6 @@
 require('dotenv').config();
+const appointment = require('./creates/appointment');
+
 
 module.exports = {
   // This is just shorthand to reference the installed dependencies you have.
@@ -13,7 +15,9 @@ module.exports = {
   searches: {},
 
   // If you want your creates to show up, you better include it here!
-  creates: {},
+  creates: {
+    [appointment.key]: appointment
+  },
 
   resources: {},
 };
