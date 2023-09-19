@@ -31,7 +31,7 @@ const addBasicAuthHeader = (req, z, bundle) => {
       (bundle.authData.username || bundle.authData.accessKey)
     ) {
       const username = bundle.authData.username || '';
-      const accessKey = bundle.authData.accessKey || '';
+      const accessKey = bundle.authData.access_key || '';
   
       const buff = Buffer.from(`${username}:${accessKey}`, 'utf8');
       const header = 'Basic ' + buff.toString('base64');
