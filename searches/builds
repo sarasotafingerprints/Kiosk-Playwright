@@ -82,6 +82,12 @@ module.exports = {
         // a search URL will depend on how your API works.
         const options = {
           params: {
+            offset: bundle.inputData.offset,
+            limit: bundle.inputData.limit,
+            status: bundle.inputData.status,
+            fromdate: bundle.inputData.fromdate,
+            todate: bundle.inputData.todate,
+            sort: bundle.inputData.sort,
           },
         };
   
@@ -92,12 +98,36 @@ module.exports = {
       // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
       // returned records, and have obviously dummy values that we can show to any user.
       sample: {
-        id: 1,
-        createdAt: 1472069465,
-        name: 'Best Spagetti Ever',
-        authorId: 1,
-        directions: '1. Boil Noodles\n2.Serve with sauce',
-        style: 'italian',
+          "Meta": {
+            "attributes": {
+              "org_id": 0
+            },
+            "result_set": {
+              "count": 0,
+              "limit": 0,
+              "offset": 0,
+              "total": 0
+            }
+          },
+          "data": [
+            {
+              "build_id": 1782,
+              "name": "shivam-video-test",
+              "user_id": 1212,
+              "username": "shivam",
+              "status_ind": "completed",
+              "create_timestamp": {},
+              "end_timestamp": {},
+              "project_id": "ML",
+              "project_name": "magicleap",
+              "tags": [
+                "tag1",
+                "tag2",
+                "tag3"
+              ],
+              "duration": 719
+            }
+          ]
       },
   
       // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
