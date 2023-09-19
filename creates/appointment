@@ -1,9 +1,8 @@
 require('dotenv').config()
 
-const { chromium } = require('playwright')
+const { chromium } = require('playwright-aws-lambda')
 const { expect } = require("expect");
-const cp = require('child_process');
-const playwrightClientVersion = cp.execSync('npx playwright --version').toString().trim().split(' ')[1];
+const playwrightClientVersion = '1.38.0';
 
 // We recommend writing your creates separate like this and rolling them
 // into the App definition at the end.
