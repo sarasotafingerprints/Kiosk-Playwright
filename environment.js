@@ -13,6 +13,8 @@ fs.readFile('.env', 'utf8', (err, data) => {
       tempData.push(key.concat(`=#Your ${key} here\n`));
     }
   });
+
+  //zapier env:set 1.0.0 MY_SECRET_VALUE=1234v
   tempData.forEach((element) => {
     tempEnv = `${tempEnv}${element}`;
   });
