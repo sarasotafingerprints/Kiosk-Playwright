@@ -1,0 +1,111 @@
+module.exports = {
+    key: 'builds',
+  
+    // You'll want to provide some helpful display labels and descriptions
+    // for users. Zapier will put them into the UX.
+    noun: 'Build',
+    display: {
+      label: 'List Builds',
+      description: 'List the Lambdatest Builds.',
+    },
+  
+    // `operation` is where we make the call to your API to do the search
+    operation: {
+      // This search only has one search field. Your searches might have just one, or many
+      // search fields.
+      inputFields:
+      [{
+          key: 'offset',
+          type: 'integer',
+          label: 'Offset',
+          required: false,
+          helpText:
+            'It defines the number of lists on the basis of limit parameter. e.g offset=10',
+        },
+        {
+          key: 'limit',
+          type: 'integer',
+          label: 'Limit',
+          required: false,
+          helpText:
+            'To fetch specified number of records. e.g. limit=10',
+        },
+        {
+          key: 'status',
+          type: 'integer',
+          label: 'Status',
+          required: false,
+          choices: {
+            running: 'running',
+            queued: 'queued',
+            completed: 'completed',
+            timeout: 'timeout',
+            error: 'error'
+          },
+          helpText:
+          'To fetch the list of builds with specific statuses. You can pass multiple comma seperated statuses e.g. running,queued,completed,timeout and error.',
+        },
+        {
+          key: 'fromdate',
+          type: 'datetime',
+          label: 'From Date',
+          required: false,
+          helpText:
+            'To fetch the list of builds that executed from the specified Start Date. The Date format must be YYYY-MM-DD. e.g. "2018-03-15".',
+        },
+        {
+          key: 'todate',
+          type: 'datetime',
+          label: 'To Date',
+          required: false,
+          helpText:
+            'To fetch the list of builds that executed till the specified End Date. If both fromdate and todate value provided then it works as range filter. The Date format must be YYYY-MM-DD. e.g. "2018-03-15".',
+        },
+        {
+          key: 'sort',
+          type: 'string',
+          label: 'Sort',
+          required: false,
+          helpText:
+            'To sort the list in ascending or descending order using multiple keys. e.g. "asc.user_id,desc.org_id"',
+        }
+      ],
+  
+      perform: (z, bundle) => {
+
+        const moment = z.require('moment');
+        moment(bundle.inputData.fromdate).format("YYYY-MM-DD UTC")
+
+        const url = 'https://api.lambdatest.com/automation/api/v1/builds';
+  
+        // Put the search value in a query param. The details of how to build
+        // a search URL will depend on how your API works.
+        const options = {
+          params: {
+          },
+        };
+  
+        return z.request(url, options).then((response) => response.data);
+      },
+  
+      // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
+      // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
+      // returned records, and have obviously dummy values that we can show to any user.
+      sample: {
+        id: 1,
+        createdAt: 1472069465,
+        name: 'Best Spagetti Ever',
+        authorId: 1,
+        directions: '1. Boil Noodles\n2.Serve with sauce',
+        style: 'italian',
+      },
+  
+      // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
+      // field definitions. The result will be used to augment the sample.
+      // outputFields: () => { return []; }
+      // Alternatively, a static field definition should be provided, to specify labels for the fields
+      outputFields: [
+        
+      ],
+    },
+  };
