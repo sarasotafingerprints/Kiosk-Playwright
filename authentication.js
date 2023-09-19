@@ -15,7 +15,7 @@ const handleBadResponses = (response, z, bundle) => {
   if (response.status === 401) {
     throw new z.errors.Error(
       // This message is surfaced to the user
-      'The username and/or password you supplied is incorrect',
+      'The Username and/or Access Key you supplied is incorrect',
       'AuthenticationError',
       response.status
     );
@@ -24,11 +24,34 @@ const handleBadResponses = (response, z, bundle) => {
   return response;
 };
 
+//modified basic Auth middleware
+const addBasicAuthHeader = (req, z, bundle) => {
+    if (
+      bundle.authData &&
+      (bundle.authData.username || bundle.authData.accessKey)
+    ) {
+      const username = bundle.authData.username || '';
+      const accessKey = bundle.authData.accessKey || '';
+  
+      const buff = Buffer.from(`${username}:${accessKey}`, 'utf8');
+      const header = 'Basic ' + buff.toString('base64');
+  
+      if (req.headers) {
+        req.headers.Authorization = header;
+      } else {
+        req.headers = {
+          Authorization: header,
+        };
+      }
+    }
+    return req;
+};
+  
 module.exports = {
   config: {
     // "basic" auth automatically creates "username" and "password" input fields. It
     // also registers default middleware to create the authentication header.
-    type: 'basic',
+    type: 'custom',
 
     // Define any input app's auth requires here. The user will be prompted to enter
     // this info when they connect their account.
@@ -47,6 +70,6 @@ module.exports = {
     // in `bundle.inputData.X`.
     connectionLabel: '{{json.username}}',
   },
-  befores: [],
+  befores: [addBasicAuthHeader],
   afters: [handleBadResponses],
 };
