@@ -1,7 +1,11 @@
 {
-  "name": ".",
+  "name": "zapier-playwright",
   "version": "1.0.0",
-  "description": "",
+  "description": "Performs Playwright tests and interacts with LambdaTest.com",
+  "repository": "sarasotafingerprints/zapier-calendly-playwright",
+  "homepage": "https://www.sarasotafingerprints.com",
+  "author": "Michael Mahoney <mike@sarasotafingerprints.com>",
+  "license": "BSD-3-Clause",
   "main": "index.js",
   "scripts": {
     "env": "node env-template.js",
