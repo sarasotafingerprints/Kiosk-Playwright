@@ -74,7 +74,7 @@ module.exports = {
     // be `{{X}}`. This can also be a function that returns a label. That function has
     // the standard args `(z, bundle)` and data returned from the test can be accessed
     // in `bundle.inputData.X`.
-    connectionLabel: '{{username}}',
+    connectionLabel: '{{bundle.inputData.username}}',
   },
   befores: [addBasicAuthHeader],
   afters: [handleBadResponses],
