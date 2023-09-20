@@ -36,7 +36,7 @@ const addBasicAuthHeader = (req, z, bundle) => {
       const buff = Buffer.from(`${username}:${accessKey}`, 'utf8');
       const header = 'Basic ' + buff.toString('base64');
 
-      z.console.log(header);
+      z.console.log(bundle.authData);
   
       if (req.headers) {
         req.headers.Authorization = header;
