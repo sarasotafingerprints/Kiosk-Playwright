@@ -24,8 +24,16 @@ const handleBadResponses = (response, z, bundle) => {
   return response;
 };
 
-//modified basic Auth middleware
+//modified basic Auth before middleware
 const addBasicAuthHeader = (req, z, bundle) => {
+    z.console.log(bundle.authData);
+    throw new z.errors.Error(
+      // This message is surfaced to the user
+      'debug',
+      'variables',
+      bundle.authData
+    );
+    
     if (
       bundle.authData &&
       (bundle.authData.username || bundle.authData.accessKey)
@@ -35,15 +43,6 @@ const addBasicAuthHeader = (req, z, bundle) => {
   
       const buff = Buffer.from(`${username}:${accessKey}`, 'utf8');
       const header = 'Basic ' + buff.toString('base64');
-
-      z.console.log(bundle.authData);
-
-      throw new z.errors.Error(
-        // This message is surfaced to the user
-        'debug',
-        'variables',
-        bundle.authData
-      );
   
       if (req.headers) {
         req.headers.Authorization = header;
