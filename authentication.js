@@ -26,17 +26,10 @@ const handleBadResponses = (response, z, bundle) => {
 
 //modified basic Auth before middleware
 const addBasicAuthHeader = (req, z, bundle) => {
-    z.console.log(bundle.authData);
-    throw new z.errors.Error(
-      // This message is surfaced to the user
-      'debug',
-      'variables',
-      bundle.authData
-    );
-    
+
     if (
       bundle.authData &&
-      (bundle.authData.username || bundle.authData.accessKey)
+      (bundle.authData.username || bundle.authData.access_key)
     ) {
       const username = bundle.authData.username || '';
       const accessKey = bundle.authData.access_key || '';
@@ -53,7 +46,7 @@ const addBasicAuthHeader = (req, z, bundle) => {
       }
     }
     return req;
-};
+}
   
 module.exports = {
   config: {
@@ -63,7 +56,7 @@ module.exports = {
 
     // Define any input app's auth requires here. The user will be prompted to enter
     // this info when they connect their account.
-    fields: [{ key: 'Username', label: 'Username', required: true }, { key: 'Access Key', label: 'Access Key', required: true }],
+    fields: [{ key: 'username', label: 'Username', required: true }, { key: 'access_key', label: 'Access Key', required: true }],
 
     // The test method allows Zapier to verify that the credentials a user provides
     // are valid. We'll execute this method whenever a user connects their account for
