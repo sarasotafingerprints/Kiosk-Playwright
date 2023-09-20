@@ -40,23 +40,38 @@ module.exports = {
       ],
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
-        
+        z.console.log(url);
         (async () => {
           try {
+            z.console.log("after try");
+
             const browser = await playwright.chromium.launch({
                 args: chromium.args,
                 executablePath: await chromium.executablePath(),
                 headless: chromium.headless,
               });
-
+              z.console.log("after browser");
               const context = await browser.newContext();
+              z.console.log("after context");
+
               const page = await context.newPage();
+              z.console.log("after page");
 
               await page.goto(url);
+              z.console.log("after goto");
+
               await page.waitForTimeout(1000);
+              z.console.log("after timepout");
+
               let element = await page.locator('BUTTON[type="submit"]');
+              z.console.log("after element");
+
               await element.click();
+              z.console.log("after click");
+
               const title = await page.title();
+              z.console.log("after title:");
+
               z.console.log(title);
               expect(title).toEqual('Confirmed - Calendly');
 
