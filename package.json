@@ -17,13 +17,11 @@
     "expect": "^29.7.0",
     "playwright": "^1.38.0",
     "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "zapier-platform-core": "15.1.0"
   },
   "devDependencies": {
     "jest": "^29.6.0"
-  },
-  "pkg": {
-    "assets": "node_modules/puppeteer-extra-plugin-stealth/**/*.*"
   },
   "private": true
 }
