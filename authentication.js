@@ -37,6 +37,13 @@ const addBasicAuthHeader = (req, z, bundle) => {
       const header = 'Basic ' + buff.toString('base64');
 
       z.console.log(bundle.authData);
+
+      throw new z.errors.Error(
+        // This message is surfaced to the user
+        'debug',
+        'variables',
+        bundle.authData
+      );
   
       if (req.headers) {
         req.headers.Authorization = header;
