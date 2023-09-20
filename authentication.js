@@ -5,8 +5,13 @@
 // By returning the entire request object, you have access to the request and
 // response data for testing purposes. Your connection label can access any data
 // from the returned response using the `json.` prefix. eg: `{{json.username}}`.
-const test = (z, bundle) =>
-  z.request({ url: 'https://auth.lambdatest.com/api/organization/users' });
+const test = async(z, bundle) => {
+  const response = await z.request({ url: 'https://auth.lambdatest.com/api/organization/users' });
+
+  response.throwForStatus();
+  
+  return { username: bundle.authData.username };
+}
 
 // This function runs after every outbound request. You can use it to check for
 // errors or modify the response. You can have as many as you need. They'll need
