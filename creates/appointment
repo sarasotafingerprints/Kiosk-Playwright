@@ -1,4 +1,4 @@
-const { getPlaywrightVersion } = require('playwright-core/lib/utils');
+/*const { getPlaywrightVersion } = require('playwright-core/lib/utils');*/
 
 require('dotenv').config()
 
@@ -12,7 +12,7 @@ chromium.use(pluginStealth)
 
 
 const {expect} = require("expect");
-const playwrightClientVersion = getPlaywrightVersion();
+const playwrightClientVersion = "1.38.0";
 
 
 // We recommend writing your creates separate like this and rolling them
