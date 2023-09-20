@@ -41,76 +41,61 @@ module.exports = {
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         z.console.log(url);
-        async function teardown(page, browser) {
-            await page.close();
-            await browser.close();
-
-            let data = {};
-            data.pageTitle = title;
-            return promise.then((data) => {
-
-              const promise = z.request({
-                url: 'https://auth-json-server.zapier-staging.com/recipes',
-                method: 'POST',
-                body: {
-                  name: "",
-                  directions: "",
-                  authorId: "",
-                  style: "",
-                },
-                headers: {
-                  'content-type': 'application/json',
-        
-                  // This is NOT how you normally do authentication. This is just to demo how to write a create here.
-                  // Refer to this doc to set up authentication:
-                  // https://zapier.github.io/zapier-platform-cli/#authentication
-                  'X-API-Key': 'secret',
-                },
-              });
-
-              response.data = data;
-              return promise.then((response) => response.data);
-            });              
-        }
 
       (async () => {
           try {
             z.console.log("after try");
+            chromium.launch({ headless: true }).then(async browser => {
+                z.console.log("after browser");
 
-            const browser = await playwright.chromium.launch({
-                args: chromium.args,
-                executablePath: await chromium.executablePath(),
-                headless: chromium.headless,
-              });
-              z.console.log("after browser");
-              const context = await browser.newContext();
-              z.console.log("after context");
+                const page = await browser.newPage();
+                z.console.log("after page");
 
-              const page = await context.newPage();
-              z.console.log("after page");
+                z.console.log('Testing the stealth plugin..')
+                await page.goto(url, { waitUntil: 'networkidle' })
+                z.console.log("after goto");
+                let element = await page.locator('BUTTON[type="submit"]');
+                z.console.log("after element");
 
-              await page.goto(url);
-              z.console.log("after goto");
+                await element.click();
+                z.console.log("after click");
 
-              await page.waitForTimeout(1000);
-              z.console.log("after timepout");
+                const title = await page.title();
+                z.console.log("after title:");
 
-              let element = await page.locator('BUTTON[type="submit"]');
-              z.console.log("after element");
+                z.console.log(title);
+                await browser.close();
 
-              await element.click();
-              z.console.log("after click");
+                let data = {};
+                data.pageTitle = title;
+                return promise.then((data) => {
 
-              const title = await page.title();
-              z.console.log("after title:");
+                  const promise = z.request({
+                    url: 'https://auth-json-server.zapier-staging.com/recipes',
+                    method: 'POST',
+                    body: {
+                      name: "",
+                      directions: "",
+                      authorId: "",
+                      style: "",
+                    },
+                    headers: {
+                      'content-type': 'application/json',
+            
+                      // This is NOT how you normally do authentication. This is just to demo how to write a create here.
+                      // Refer to this doc to set up authentication:
+                      // https://zapier.github.io/zapier-platform-cli/#authentication
+                      'X-API-Key': 'secret',
+                    },
+                  });
 
-              z.console.log(title);
-              expect(title).toEqual('Confirmed - Calendly');
-
-              await teardown(page, browser);
+                  response.data = data;
+                  return promise.then((response) => response.data);
+                });
+              })
             } catch (e) {
+              await browser.close();
               z.console.log(e);
-              await teardown(page, browser);
               throw e
             }
       })()
