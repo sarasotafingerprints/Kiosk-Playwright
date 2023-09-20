@@ -41,7 +41,39 @@ module.exports = {
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         z.console.log(url);
-        (async () => {
+        async function teardown(page, browser) {
+            await page.close();
+            await browser.close();
+
+            let data = {};
+            data.pageTitle = title;
+            return promise.then((data) => {
+
+              const promise = z.request({
+                url: 'https://auth-json-server.zapier-staging.com/recipes',
+                method: 'POST',
+                body: {
+                  name: "",
+                  directions: "",
+                  authorId: "",
+                  style: "",
+                },
+                headers: {
+                  'content-type': 'application/json',
+        
+                  // This is NOT how you normally do authentication. This is just to demo how to write a create here.
+                  // Refer to this doc to set up authentication:
+                  // https://zapier.github.io/zapier-platform-cli/#authentication
+                  'X-API-Key': 'secret',
+                },
+              });
+
+              response.data = data;
+              return promise.then((response) => response.data);
+            });              
+        }
+
+      (async () => {
           try {
             z.console.log("after try");
 
@@ -81,24 +113,14 @@ module.exports = {
               await teardown(page, browser);
               throw e
             }
-          
-            async function teardown(page, browser) {
-              await page.close();
-              await browser.close();
-    
-              let data = {};
-              data.pageTitle = title;
-              return promise.then((data) => data);
-            }
-          }
-        )();
+      })()
     },
   
     // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
     // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
     // returned records, and have obviously dummy values that we can show to any user.
     sample: {
-      id: 1
+      title: 1
     },
 
     // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
