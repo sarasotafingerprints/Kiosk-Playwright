@@ -1,6 +1,12 @@
 
+require('dotenv').config();
 
-require('dotenv').config()
+const { chromium } = require('playwright-extra');
+const awsChromium = require('chrome-aws-lambda');
+const pluginStealth = require("puppeteer-extra-plugin-stealth");
+ 
+// Use stealth
+chromium.use(pluginStealth);
 
 const playwright = require('playwright-aws-lambda');
 const {expect} = require("expect");
@@ -35,14 +41,15 @@ module.exports = {
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         
-        let browser = null;
-
         (async () => {
           try {
-            browser = await playwright.launchChromium();
-            const context = await browser.newContext();
+            const browser = await chromium.launch({
+              headless: false,
+              executablePath: awsChromium.executablePath,
+            });
           
-            const page = await context.newPage();
+            const page = await browser.newPage();
+
             // Go to the website 
             await page.goto(url);
             // Wait for page to download
