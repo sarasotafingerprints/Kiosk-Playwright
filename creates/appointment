@@ -44,39 +44,38 @@ module.exports = {
         (async () => {
           try {
             const browser = await playwright.chromium.launch({
-              args: chromium.args,
-              executablePath: await chromium.executablePath,
-              headless: chromium.headless,
-            });
+                args: chromium.args,
+                executablePath: await chromium.executablePath,
+                headless: chromium.headless,
+              });
 
-            const context = await browser.newContext();
-            const page = await context.newPage();
+              const context = await browser.newContext();
+              const page = await context.newPage();
 
-            await page.goto(url);
-            await page.waitForTimeout(1000);
-            let element = await page.locator('BUTTON[type="submit"]');
-            await element.click();
-            const title = await page.title();
-          
-            expect(title).toEqual('Confirmed - Calendly');
+              await page.goto(url);
+              await page.waitForTimeout(1000);
+              let element = await page.locator('BUTTON[type="submit"]');
+              await element.click();
+              const title = await page.title();
             
-            await teardown(page, browser);
-          } catch (e) {
-            await teardown(page, browser);
-            throw e
-          }
-        
-          async function teardown(page, browser) {
-            await page.close();
-            await browser.close();
-  
-            let response = {};
-            return promise.then((response) => null);
-          }
-        })();
+              expect(title).toEqual('Confirmed - Calendly');
 
+              await teardown(page, browser);
+            } catch (e) {
+              await teardown(page, browser);
+              throw e
+            }
           
-        
+            async function teardown(page, browser) {
+              await page.close();
+              await browser.close();
+    
+              let response = {};
+              return promise.then((response) => null);
+            }
+          }
+        )();
+
       },
   
       // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
