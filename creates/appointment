@@ -1,8 +1,19 @@
+import { getPlaywrightVersion } from 'playwright-core/lib/utils';
+
 require('dotenv').config()
 
-const { chromium } = require('playwright')
+const { chromium } = require('playwright-extra');
+
+// Load the stealth plugin and use defaults (all tricks to hide playwright usage)
+const pluginStealth = require("puppeteer-extra-plugin-stealth");
+
+// Use stealth
+chromium.use(pluginStealth)
+
+
 const {expect} = require("expect");
-const playwrightClientVersion = '1.38.0';
+const playwrightClientVersion = getPlaywrightVersion();
+
 
 // We recommend writing your creates separate like this and rolling them
 // into the App definition at the end.
@@ -57,19 +68,23 @@ module.exports = {
           const browser = await chromium.connect({
             wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(JSON.stringify(capabilities))}`
           })
-        
+          
+          // Create a new page 
           const page = await browser.newPage()
         
+          // Go to the website 
           await page.goto(url);
+
+          // Wait for page to download
+          await page.waitForTimeout(1000);
         
-          let element = await page.locator("[name=\"q\"]");
+          let element = await page.locator('BUTTON[type="submit"]');
           await element.click();
-          await element.type("LambdaTest");
-          await element.press("Enter");
-          const title = await page.title()
+
+          const title = await page.title();
         
           try {
-            expect(title).toEqual('LambdaTest at DuckDuckGo')
+            expect(title).toEqual('Confirmed - Calendly')
             // Mark the test as completed or failed
             await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'passed', remark: 'Title matched' } })}`)
             await teardown(page, browser)
