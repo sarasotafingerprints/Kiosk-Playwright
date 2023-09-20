@@ -2,14 +2,11 @@
 require('dotenv').config();
 //const chromium = require('chrome-aws-lambda');
 const { chromium } = require('playwright-extra')
-const playwright = require('playwright-core');
 
 const pluginStealth = require("puppeteer-extra-plugin-stealth");
 
 // Use stealth
 chromium.use(pluginStealth);
-
-const {expect} = require("expect");
 
 // We recommend writing your creates separate like this and rolling them
 // into the App definition at the end.
