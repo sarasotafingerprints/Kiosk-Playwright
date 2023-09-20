@@ -48,17 +48,18 @@ module.exports = {
               executablePath: await chromium.executablePath,
               headless: chromium.headless,
             });
-        
-            const page = await browser.newPage();
+
+            const context = await browser.newContext();
+            const page = await context.newPage();
+
             await page.goto(url);
             await page.waitForTimeout(1000);
             let element = await page.locator('BUTTON[type="submit"]');
             await element.click();
             const title = await page.title();
-
           
-            expect(title).toEqual('Confirmed - Calendly')
-
+            expect(title).toEqual('Confirmed - Calendly');
+            
             await teardown(page, browser);
           } catch (e) {
             await teardown(page, browser);
