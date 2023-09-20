@@ -22,5 +22,8 @@
   "devDependencies": {
     "jest": "^29.6.0"
   },
+  "pkg": {
+    "assets": "node_modules/puppeteer-extra-plugin-stealth/**/*.*"
+  },
   "private": true
 }
