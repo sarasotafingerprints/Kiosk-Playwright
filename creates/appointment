@@ -57,7 +57,7 @@ module.exports = {
               let element = await page.locator('BUTTON[type="submit"]');
               await element.click();
               const title = await page.title();
-            
+              z.console.log(title);
               expect(title).toEqual('Confirmed - Calendly');
 
               await teardown(page, browser);
