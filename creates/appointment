@@ -1,4 +1,4 @@
-import { getPlaywrightVersion } from 'playwright-core/lib/utils';
+const { getPlaywrightVersion } = require('playwright-core');
 
 require('dotenv').config()
 
