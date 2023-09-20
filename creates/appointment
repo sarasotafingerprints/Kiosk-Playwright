@@ -71,8 +71,9 @@ module.exports = {
               await page.close();
               await browser.close();
     
-              let response = {};
-              return promise.then((response) => null);
+              let data = {};
+              data.pageTitle = title;
+              return promise.then((data) => data);
             }
           }
         )();
