@@ -9,7 +9,7 @@ const test = async(z, bundle) => {
   const response = await z.request({ url: 'https://auth.lambdatest.com/api/organization/users' });
 
   response.throwForStatus();
-  
+
   return { username: bundle.authData.username };
 }
 
@@ -74,7 +74,7 @@ module.exports = {
     // be `{{X}}`. This can also be a function that returns a label. That function has
     // the standard args `(z, bundle)` and data returned from the test can be accessed
     // in `bundle.inputData.X`.
-    connectionLabel: '{{json.username}}',
+    connectionLabel: '{{username}}',
   },
   befores: [addBasicAuthHeader],
   afters: [handleBadResponses],
