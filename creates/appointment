@@ -1,7 +1,7 @@
 require('dotenv').config()
 
-const { chromium } = require('playwright-aws-lambda')
-const { expect } = require("expect");
+const { chromium } = require('playwright')
+const {expect} = require("expect");
 const playwrightClientVersion = '1.38.0';
 
 // We recommend writing your creates separate like this and rolling them
