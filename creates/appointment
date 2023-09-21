@@ -93,7 +93,7 @@ module.exports = {
     // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
     // returned records, and have obviously dummy values that we can show to any user.
     sample: {
-      title: 1
+      created: true
     },
 
     // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
