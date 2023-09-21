@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const test = require("node:test");
 // Need to rename playwright's chromium object to something else
-const { chromium: playwright } = require("playwright-core");
+const { chromium: playwrightCromium } = require("playwright-core");
 const chromium = require("@sparticuz/chromium");
 
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
         z.console.log(url);
 
         test("Check the page title after creating appointment", async (t) => {
-          const browser = await playwright.launch({
+          const browser = await playwrightCromium.launch({
             args: chromium.args,
             executablePath: await chromium.executablePath(),
             headless: chromium.headless,
