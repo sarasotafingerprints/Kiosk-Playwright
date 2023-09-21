@@ -6,8 +6,6 @@ const test = require("node:test");
 const { chromium: playwright } = require("playwright-core");
 const chromium = require("@sparticuz/chromium");
 
-//end new code
-
 module.exports = {
     key: 'appointment',
     noun: 'appointment',
@@ -32,7 +30,7 @@ module.exports = {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         z.console.log(url);
 
-        test("Check the page title of example.com", async (t) => {
+        test("Check the page title after creating appointment", async (t) => {
           const browser = await playwright.launch({
             args: chromium.args,
             executablePath: await chromium.executablePath(),
