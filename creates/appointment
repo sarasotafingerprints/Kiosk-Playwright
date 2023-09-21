@@ -37,10 +37,12 @@ module.exports = {
             headless: chromium.headless,
           });
         
-          const context = await browser.newContext();
-          const page = await context.newPage();
-          await page.goto(url, { waitUntil: 'networkidle' });
+          const page = await browser.newPage();
+
+          await page.goto(url, { waitUntil: "networkidle0" });
+      
           let element = await page.locator('BUTTON[type="submit"]');
+          
           await element.click();
           await page.waitForTimeout(6000);
           const title = await page.title();
