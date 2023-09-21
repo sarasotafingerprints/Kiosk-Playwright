@@ -1,27 +1,22 @@
 
 require('dotenv').config();
-//const chromium = require('chrome-aws-lambda');
+
+const { getPlaywrightVersion } = require('playwright-core/lib/utils');
 const { chromium } = require('playwright-extra')
+const stealth = require("puppeteer-extra-plugin-stealth")()
+chromium.use(stealth);
 
-const pluginStealth = require("puppeteer-extra-plugin-stealth");
+const {expect} = require("expect");
 
-// Use stealth
-chromium.use(pluginStealth);
+const playWrightClientVersion = getPlaywrightVersion();
 
-// We recommend writing your creates separate like this and rolling them
-// into the App definition at the end.
 module.exports = {
     key: 'appointment',
-  
-    // You'll want to provide some helpful display labels and descriptions
-    // for users. Zapier will put them into the UX.
     noun: 'appointment',
     display: {
       label: 'Create appointment',
       description: 'Creates a new calendly appointment.',
     },
-  
-    // `operation` is where the business logic goes.
     operation: {
       inputFields: [
         { key: 'first_name', label: 'First Name', required: true, type: 'string' },
@@ -38,64 +33,60 @@ module.exports = {
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         z.console.log(url);
-
-      (async () => {
-          try {
-            z.console.log("after try");
-            chromium.launch({ headless: true }).then(async browser => {
-                z.console.log("after browser");
-
-                const page = await browser.newPage();
-                z.console.log("after page");
-
-                z.console.log('Testing the stealth plugin..')
-                await page.goto(url, { waitUntil: 'networkidle' })
-                z.console.log("after goto");
-                let element = await page.locator('BUTTON[type="submit"]');
-                z.console.log("after element");
-
-                await element.click();
-                z.console.log("after click");
-
-                const title = await page.title();
-                z.console.log("after title:");
-
-                z.console.log(title);
-                await browser.close();
-
-                let data = {};
-                data.pageTitle = title;
-                return promise.then((data) => {
-
-                  const promise = z.request({
-                    url: 'https://auth-json-server.zapier-staging.com/recipes',
-                    method: 'POST',
-                    body: {
-                      name: "",
-                      directions: "",
-                      authorId: "",
-                      style: "",
-                    },
-                    headers: {
-                      'content-type': 'application/json',
-            
-                      // This is NOT how you normally do authentication. This is just to demo how to write a create here.
-                      // Refer to this doc to set up authentication:
-                      // https://zapier.github.io/zapier-platform-cli/#authentication
-                      'X-API-Key': 'secret',
-                    },
-                  });
-
-                  response.data = data;
-                  return promise.then((response) => response.data);
-                });
-              })
-            } catch (e) {
-              await browser.close();
-              z.console.log(e);
-              throw e
+        (async () => {
+          const capabilities = {
+            'browserName': 'Chrome',
+            'browserVersion': 'latest',
+            'LT:Options': {
+              'platform': 'Windows 10',
+              'build': 'Playwright Single Build',
+              'name': 'Playwright Sample Test',
+              'user': bundle.authData.username,
+              'accessKey': bundle.authData.access_key,
+              'network': true,
+              'video': true,
+              'console': true,
+              'tunnel': false,
+              'tunnelName': '',
+              'geoLocation': 'US', // country code can be fetched from https://www.lambdatest.com/capabilities-generator/
+              'timezone': 'New_York',
+              'playwrightClientVersion': playwrightClientVersion
             }
-      })()
+          }
+        
+          const browser = await chromium.connect({
+            wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(JSON.stringify(capabilities))}`
+          })
+        
+          const page = await browser.newPage()
+          await page.goto(url, { waitUntil: 'networkidle' });
+        
+          let element = await page.locator('BUTTON[type="submit"]');
+          await element.click();
+          
+          await page.waitForTimeout(6000);
+          /*await page.screenshot({ path: 'screenshot.png', fullPage: true });*/
+          const title = await page.title();
+        
+          console.log(title);
+        
+          try {
+            expect(title).toEqual('Confirmed - Calendly');
+            await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'passed', remark: 'Title matched' } })}`)
+            await teardown(page, browser);
+            return { created: true };
+          } catch (e) {
+            await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'failed', remark: e.stack } })}`)
+            await teardown(page, browser)
+            return { created: false, error: e }
+          }
+        
+        })()
+        
+        async function teardown(page, browser) {
+          await page.close();
+          await browser.close();
+        }
     },
   
     // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
