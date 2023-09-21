@@ -8,7 +8,7 @@ chromium.use(stealth);
 
 const {expect} = require("expect");
 
-const playWrightClientVersion = getPlaywrightVersion();
+const playwrightClientVersion = getPlaywrightVersion();
 
 module.exports = {
     key: 'appointment',
