@@ -1,14 +1,12 @@
 
 require('dotenv').config();
 
-const { getPlaywrightVersion } = require('playwright-core/lib/utils');
-const { chromium } = require('playwright-extra')
-const stealth = require("puppeteer-extra-plugin-stealth")()
-chromium.use(stealth);
+const test = require("node:test");
+// Need to rename playwright's chromium object to something else
+const { chromium: playwright } = require("playwright-core");
+const chromium = require("@sparticuz/chromium");
 
-const {expect} = require("expect");
-
-const playwrightClientVersion = getPlaywrightVersion();
+//end new code
 
 module.exports = {
     key: 'appointment',
@@ -33,60 +31,32 @@ module.exports = {
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         z.console.log(url);
-        (async () => {
-          const capabilities = {
-            'browserName': 'Chrome',
-            'browserVersion': 'latest',
-            'LT:Options': {
-              'platform': 'Windows 10',
-              'build': 'Playwright Single Build',
-              'name': 'Playwright Sample Test',
-              'user': bundle.authData.username,
-              'accessKey': bundle.authData.access_key,
-              'network': true,
-              'video': true,
-              'console': true,
-              'tunnel': false,
-              'tunnelName': '',
-              'geoLocation': 'US', // country code can be fetched from https://www.lambdatest.com/capabilities-generator/
-              'timezone': 'New_York',
-              'playwrightClientVersion': playwrightClientVersion
-            }
-          }
+
+        test("Check the page title of example.com", async (t) => {
+          const browser = await playwright.launch({
+            args: chromium.args,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
+          });
         
-          const browser = await chromium.connect({
-            wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(JSON.stringify(capabilities))}`
-          })
-        
-          const page = await browser.newPage()
+          const context = await browser.newContext();
+          const page = await context.newPage();
           await page.goto(url, { waitUntil: 'networkidle' });
-        
           let element = await page.locator('BUTTON[type="submit"]');
           await element.click();
-          
           await page.waitForTimeout(6000);
-          /*await page.screenshot({ path: 'screenshot.png', fullPage: true });*/
           const title = await page.title();
-        
-          console.log(title);
-        
-          try {
-            expect(title).toEqual('Confirmed - Calendly');
-            await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'passed', remark: 'Title matched' } })}`)
-            await teardown(page, browser);
-            return { created: true };
-          } catch (e) {
-            await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'failed', remark: e.stack } })}`)
-            await teardown(page, browser)
+          await browser.close();
+          try 
+          {
+            assert.strictEqual(title, "Confirmed - Calendly");
+            return { created: true }
+          } 
+          catch (e)
+          {
             return { created: false, error: e }
           }
-        
-        })()
-        
-        async function teardown(page, browser) {
-          await page.close();
-          await browser.close();
-        }
+        });
     },
   
     // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
@@ -101,6 +71,7 @@ module.exports = {
     // outputFields: () => { return []; }
     // Alternatively, a static field definition should be provided, to specify labels for the fields
     outputFields: [
-    ],
+      { key:'created', type: 'boolean' }
+    ]
   },
 };
