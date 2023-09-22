@@ -28,15 +28,19 @@ module.exports = {
       ],
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
-
+        z.console.log("url:", url);
         test("Check the page title after creating appointment", async (t) => {
           try 
           {
+            z.console.log("in try in test");
+            
+            z.console.log(playwright.chromium.launch);
             const browser = await playwright.chromium.launch({
               args: chromium.args,
               executablePath: await chromium.executablePath,
               headless: chromium.headless,
             });
+            z.console.log(" browser");
           
             const page = await browser.newPage();
 
