@@ -1,10 +1,15 @@
 
 require('dotenv').config();
 
-const test = require("node:test");
+const { getPlaywrightVersion } = require('playwright-core/lib/utils');
+const { chromium } = require('playwright-extra')
+const stealth = require("puppeteer-extra-plugin-stealth")()
+chromium.use(stealth);
 
-const chromium = require('chrome-aws-lambda');
-const playwright = require('playwright-core');
+const {expect} = require("expect");
+
+const playWrightClientVersion = getPlaywrightVersion();
+console.log("playWrightClientVersion:", playWrightClientVersion);
 
 module.exports = {
     key: 'appointment',
@@ -29,16 +34,6 @@ module.exports = {
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         z.console.log("url:", url);
-
-        const { getPlaywrightVersion } = require('playwright-core/lib/utils');
-        const { chromium } = require('playwright-extra')
-        const stealth = require("puppeteer-extra-plugin-stealth")()
-        chromium.use(stealth);
-
-        const {expect} = require("expect");
-
-        const playWrightClientVersion = getPlaywrightVersion();
-        console.log("playWrightClientVersion:", playWrightClientVersion);
 
         (async () => {
           const capabilities = {
