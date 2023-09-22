@@ -30,7 +30,7 @@ module.exports = {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
 
         test("Check the page title after creating appointment", async (t) => {
-    
+          
           const browser = await playwright.chromium.launch({
             args: chromium.args,
             executablePath: await chromium.executablePath,
