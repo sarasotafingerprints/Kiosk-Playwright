@@ -2,11 +2,9 @@
 require('dotenv').config();
 
 const test = require("node:test");
-// Need to rename playwright's chromium object to something else
-const { chromium: playwrightCromium } = require("playwright-core");
-//const chromium = require("@sparticuz/chromium");
-const chromium = require("@sparticuz/chromium-min");
 
+const chromium = require('chrome-aws-lambda');
+const playwright = require('playwright-core');
 
 module.exports = {
     key: 'appointment',
@@ -30,18 +28,13 @@ module.exports = {
       ],
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
-        z.console.log(url);
 
         test("Check the page title after creating appointment", async (t) => {
     
-          const browser = await playwrightCromium.launch({
+          const browser = await playwright.chromium.launch({
             args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(
-              "https://github.com/Sparticuz/chromium/releases/download/v110.0.1/chromium-v110.0.1-pack.tar"
-            ),
+            executablePath: await chromium.executablePath,
             headless: chromium.headless,
-            ignoreHTTPSErrors: true,
           });
         
           const page = await browser.newPage();
@@ -53,6 +46,7 @@ module.exports = {
           await element.click();
           await page.waitForTimeout(6000);
           const title = await page.title();
+          z.console.log(title);
           await browser.close();
           try 
           {
