@@ -8,9 +8,6 @@ chromium.use(stealth);
 
 const {expect} = require("expect");
 
-const playWrightClientVersion = getPlaywrightVersion();
-console.log("playWrightClientVersion:", playWrightClientVersion);
-
 module.exports = {
     key: 'appointment',
     noun: 'appointment',
@@ -34,6 +31,9 @@ module.exports = {
       perform: (z, bundle) => {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         z.console.log("url:", url);
+
+        const playWrightClientVersion = getPlaywrightVersion();
+        console.log("playWrightClientVersion:", playWrightClientVersion);
 
         (async () => {
           const capabilities = {
