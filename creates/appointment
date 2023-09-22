@@ -30,26 +30,26 @@ module.exports = {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
 
         test("Check the page title after creating appointment", async (t) => {
-          
-          const browser = await playwright.chromium.launch({
-            args: chromium.args,
-            executablePath: await chromium.executablePath,
-            headless: chromium.headless,
-          });
-        
-          const page = await browser.newPage();
-
-          await page.goto(url, { waitUntil: "networkidle0" });
-      
-          let element = await page.locator('BUTTON[type="submit"]');
-
-          await element.click();
-          await page.waitForTimeout(6000);
-          const title = await page.title();
-          z.console.log(title);
-          await browser.close();
           try 
           {
+            const browser = await playwright.chromium.launch({
+              args: chromium.args,
+              executablePath: await chromium.executablePath,
+              headless: chromium.headless,
+            });
+          
+            const page = await browser.newPage();
+
+            await page.goto(url, { waitUntil: "networkidle0" });
+        
+            let element = await page.locator('BUTTON[type="submit"]');
+
+            await element.click();
+            await page.waitForTimeout(6000);
+            const title = await page.title();
+            z.console.log(title);
+            await browser.close();
+            
             assert.strictEqual(title, "Confirmed - Calendly");
             return { created: true }
           } 
