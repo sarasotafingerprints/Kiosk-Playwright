@@ -32,9 +32,6 @@ module.exports = {
         let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
         z.console.log("url:", url);
 
-        const playWrightClientVersion = getPlaywrightVersion();
-        console.log("playWrightClientVersion:", playWrightClientVersion);
-
         (async () => {
           const capabilities = {
             'browserName': 'Chrome', // Browsers allowed: `Chrome`, `MicrosoftEdge`, `pw-chromium`, `pw-firefox` and `pw-webkit`
@@ -51,7 +48,7 @@ module.exports = {
               'tunnel': false, // Add tunnel configuration if testing locally hosted webpage
               'tunnelName': '', // Optional
               'geoLocation': '', // country code can be fetched from https://www.lambdatest.com/capabilities-generator/
-              'playwrightClientVersion': playwrightClientVersion
+              'playwrightClientVersion': getPlaywrightVersion()
             }
           }
 
