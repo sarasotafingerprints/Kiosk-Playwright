@@ -26,74 +26,77 @@ module.exports = {
           helpText: 'The Calendly URL for the available appointment time.',
         }
       ],
-      perform: (z, bundle) => {
+      perform: async (z, bundle) => {
+      try {
+        let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
+        z.console.log(url);
+
+        const browser = await playwright.launch({
+          args: chromium.args,
+          executablePath: await chromium.executablePath(),
+          headless: chromium.headless,
+        });
+      
+        const context = await browser.newContext();
+        const page = await context.newPage();
+        await page.goto(url);
+        await page.goto(url);
+        let element = await page.locator('Button[type="submit"]');
+        await element.click();
+        let regex = /https:\/\/calendly\.com\/srqfingerprints\/sarasota-fingerprints-appointment-walk-in\/invitees\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/i;
+        let options = {
+          timeout: 5000,
+          waitUntil: 'commit'
+        };
+
+        await page.waitForURL(regex, options);
+
+        const newUrl = await page.url();
+        uuid = newUrl.split(/[\/]+/).pop();
+
         try {
-          let url = `${bundle.inputData.url}?first_name=${bundle.inputData.first_name}&last_name=${bundle.inputData.last_name}&email=${bundle.inputData.email}`;
-          z.console.log(url);
+            expect(uuid).toHaveLength(36);
+            // Mark the test as completed or failed
+            await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'passed', remark: 'uuid has a length of 36' } })}`)
+            await teardown(page, browser)
+          } catch (e) {
+            await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'failed', remark: e.stack } })}`)
+            await teardown(page, browser)
 
-          const browser = await playwright.launch({
-            args: chromium.args,
-            executablePath: await chromium.executablePath(),
-            headless: chromium.headless,
-          });
-        
-          const context = await browser.newContext();
-          const page = await context.newPage();
-          await page.goto(url);
-          await page.goto(url);
-          let element = await page.locator('Button[type="submit"]');
-          await element.click();
-          let regex = /https:\/\/calendly\.com\/srqfingerprints\/sarasota-fingerprints-appointment-walk-in\/invitees\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/i;
-          let options = {
-            timeout: 5000,
-            waitUntil: 'commit'
-          };
-
-          await page.waitForURL(regex, options);
-
-          const newUrl = await page.url();
-          uuid = newUrl.split(/[\/]+/).pop();
-
-          try {
-              expect(uuid).toHaveLength(36);
-              // Mark the test as completed or failed
-              await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'passed', remark: 'uuid has a length of 36' } })}`)
-              await teardown(page, browser)
-            } catch (e) {
-              await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: 'setTestStatus', arguments: { status: 'failed', remark: e.stack } })}`)
-              await teardown(page, browser)
-
-              z.console.log(e.stack);
-              throw e
-            }
-
-        } catch (e) {
-          success = false;
-          errorMessage = e.message;
-          await teardown(page, browser);
-        } finally {
-          return {
-            success: success,
-            errorMessage: errorMessage,
-            uuid: uuid
+            z.console.log(e.stack);
+            throw e
           }
+
+      } catch (e) {
+        success = false;
+        errorMessage = e.message;
+        await teardown(page, browser);
+      } finally {
+        return {
+          success: success,
+          errorMessage: errorMessage,
+          uuid: uuid
         }
       }
-    },
-  
-    // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
-    // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
-    // returned records, and have obviously dummy values that we can show to any user.
-    sample: {
-      created: true
-    },
-
-    // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
-    // field definitions. The result will be used to augment the sample.
-    // outputFields: () => { return []; }
-    // Alternatively, a static field definition should be provided, to specify labels for the fields
-    outputFields: [
-      { key:'created', type: 'boolean' }
-    ]
+    }
   },
-};
+
+  // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
+  // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
+  // returned records, and have obviously dummy values that we can show to any user.
+  sample: {
+    success: true,
+    errorMessage: '',
+    uuid: ''
+  },
+
+  // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
+  // field definitions. The result will be used to augment the sample.
+  // outputFields: () => { return []; }
+  // Alternatively, a static field definition should be provided, to specify labels for the fields
+  outputFields: [ 
+      { key:'success', type: 'boolean' },
+      { key: 'errorMessage', type: 'string'},
+      { key: 'uuid', type: 'string' }
+  ]
+}
