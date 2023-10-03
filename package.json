@@ -1,7 +1,7 @@
 {
   "name": "zapier-playwright",
   "version": "1.0.0",
-  "description": "Performs Playwright tests and interacts with LambdaTest.com",
+  "description": "Performs Playwright tests",
   "repository": "sarasotafingerprints/zapier-calendly-playwright",
   "homepage": "https://www.sarasotafingerprints.com",
   "author": "Michael Mahoney <mike@sarasotafingerprints.com>",
@@ -12,10 +12,11 @@
     "test": "jest --testTimeout 10000"
   },
   "dependencies": {
+    "@playwright/test": "^1.38.0",
     "chrome-aws-lambda": "^9.1.0",
     "dotenv": "^16.3.1",
     "expect": "^29.7.0",
-    "playwright-core": "^1.38.1",
+    "playwright-core": "^1.38.0",
     "playwright-extra": "^4.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "zapier-platform-core": "15.1.0"
